@@ -10,19 +10,7 @@ class CodeForm extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.keyDown = this.keyDown.bind(this);
-    }
-
-    handleChange(e) {
-        this.props.handleChange(e);
-
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        this.props.handleSubmit();
     }
 
     keyDown(e) {
@@ -44,13 +32,13 @@ class CodeForm extends React.Component {
     render() {
         return (
             <form
-                onSubmit={this.handleSubmit}
+                onSubmit={this.props.handleSubmit}
             >
                 <textarea
                     name="code"
                     id="code"
                     value={this.props.code}
-                    onChange={this.handleChange}
+                    onChange={this.props.handleChange}
                     onKeyDown={this.keyDown}
                     rows="20"
                     cols="50"
@@ -71,7 +59,7 @@ class App extends React.Component {
         this.state = {
             code: (
                 'function add(a, b) { \n' +
-                '   return a + b;\n' + 
+                '\treturn a + b;\n' + 
                 '}\n' + 
                 '\n' + 
                 'add(1, 2);'
@@ -86,7 +74,8 @@ class App extends React.Component {
         this.setState({code: e.target.value});
     }
 
-    handleSubmit() {
+    handleSubmit(e) {
+        e.preventDefault();
         this.evaluateCode(this.state.code);
     }
 
@@ -108,6 +97,5 @@ class App extends React.Component {
     }
 
 }
-
 
 export default App;
