@@ -1,5 +1,7 @@
-export function modNode(node) {
+function modNode(node) {
     if (node.type === 'BlockStatement') {
-        console.log(node);
+        console.log('its a block statement');
     }
 }
+
+export { modNode }

@@ -1,5 +1,8 @@
 import React from 'react';
+
 import './App.css';
+import { modNode } from './parser.js'
+
 import * as esprima from 'esprima';
 
 function Title() {
@@ -76,11 +79,7 @@ class App extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        this.evaluateCode(this.state.code);
-    }
-
-    evaluateCode(strFunc) {
-        console.log(esprima.parseScript(strFunc));
+        esprima.parseScript(this.state.code, null, modNode);
     }
 
     render() {
