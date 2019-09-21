@@ -7,17 +7,8 @@ function Title() {
 }
 
 class CodeForm extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            code: (
-                'function add(a, b) { \n' +
-                '   return a + b;\n' + 
-                '}\n' + 
-                '\n' + 
-                'add(1, 2);'
-            )
-        };
+    constructor(props) {
+        super(props);
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -25,17 +16,13 @@ class CodeForm extends React.Component {
     }
 
     handleChange(e) {
-        this.setState({code: e.target.value});
+        this.props.handleChange(e);
 
     }
 
     handleSubmit(e) {
         e.preventDefault();
-        this.evaluateCode(this.state.code);
-    }
-
-    evaluateCode(strFunc) {
-        console.log(esprima.parseScript(strFunc));
+        this.props.handleSubmit();
     }
 
     keyDown(e) {
@@ -62,7 +49,7 @@ class CodeForm extends React.Component {
                 <textarea
                     name="code"
                     id="code"
-                    value={this.state.code}
+                    value={this.props.code}
                     onChange={this.handleChange}
                     onKeyDown={this.keyDown}
                     rows="20"
@@ -78,13 +65,49 @@ class CodeForm extends React.Component {
     }
 }
 
-function App() {
-  return (
-    <div>
-        <Title></Title>
-        <CodeForm></CodeForm>
-    </div>
-  );
+class App extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            code: (
+                'function add(a, b) { \n' +
+                '   return a + b;\n' + 
+                '}\n' + 
+                '\n' + 
+                'add(1, 2);'
+            )
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(e) {
+        this.setState({code: e.target.value});
+    }
+
+    handleSubmit() {
+        this.evaluateCode(this.state.code);
+    }
+
+    evaluateCode(strFunc) {
+        console.log(esprima.parseScript(strFunc));
+    }
+
+    render() {
+        return (
+            <div>
+                <Title></Title>
+                <CodeForm
+                    code={this.state.code}
+                    handleSubmit={this.handleSubmit}
+                    handleChange={this.handleChange}
+                ></CodeForm>
+            </div>
+        )
+    }
+
 }
+
 
 export default App;
