@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import * as esprima from 'esprima';
 
 function Title() {
     return <h1>Spy Code!</h1>;
@@ -34,7 +35,7 @@ class CodeForm extends React.Component {
     }
 
     evaluateCode(strFunc) {
-        console.log(eval(strFunc));
+        console.log(esprima.parseScript(strFunc));
     }
 
     keyDown(e) {
