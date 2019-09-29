@@ -1,9 +1,8 @@
 import React from 'react';
 
 import './App.css';
-import { modNode } from './parser.js'
 
-import * as esprima from 'esprima';
+import * as parser from '@babel/parser'
 
 function Title() {
     return <h1>Spy Code!</h1>;
@@ -79,7 +78,7 @@ class App extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        esprima.parseScript(this.state.code, null, modNode);
+        console.log(parser.parse(this.state.code));
     }
 
     render() {
