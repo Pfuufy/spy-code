@@ -2,6 +2,7 @@ import React from 'react';
 
 import './App.css';
 
+import { convertToIIFEFunction } from './parser';
 import { parse } from '@babel/parser';
 import generate from '@babel/generator';
 
@@ -12,7 +13,6 @@ function Title() {
 class CodeForm extends React.Component {
     constructor(props) {
         super(props);
-
         this.keyDown = this.keyDown.bind(this);
     }
 
@@ -62,13 +62,11 @@ class App extends React.Component {
         this.state = {
             code: (
                 'function add(a, b) { \n' +
+                '\tif (a === 1) return a;\n' +
                 '\treturn a + b;\n' + 
-                '}\n' + 
-                '\n' + 
-                'add(1, 2);'
+                '}'
             )
         };
-
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -81,10 +79,10 @@ class App extends React.Component {
         e.preventDefault();
         
         const ast = parse(this.state.code);
-        const func = generate(ast);
+        // const func = generate(ast);
 
-        console.log(ast);
-        console.log(func.code);
+        const IIFEFunction = convertToIIFEFunction(ast);
+        console.log(IIFEFunction);
     }
 
     render() {
