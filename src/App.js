@@ -3,8 +3,6 @@ import React from 'react';
 import './App.css';
 
 import { convertToIIFEFunction } from './parser';
-import { parse } from '@babel/parser';
-import generate from '@babel/generator';
 
 function Title() {
     return <h1>Spy Code!</h1>;
@@ -77,11 +75,7 @@ class App extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        
-        const ast = parse(this.state.code);
-        // const func = generate(ast);
-
-        const IIFEFunction = convertToIIFEFunction(ast);
+        const IIFEFunction = convertToIIFEFunction(this.state.code);
         console.log(IIFEFunction);
     }
 
