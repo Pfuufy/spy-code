@@ -79,7 +79,12 @@ class App extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        console.log(parse(this.state.code));
+        
+        const ast = parse(this.state.code);
+        const func = generate(ast);
+
+        console.log(ast);
+        console.log(func.code);
     }
 
     render() {
