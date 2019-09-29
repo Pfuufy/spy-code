@@ -2,7 +2,8 @@ import React from 'react';
 
 import './App.css';
 
-import * as parser from '@babel/parser'
+import { parse } from '@babel/parser';
+import generate from '@babel/generator';
 
 function Title() {
     return <h1>Spy Code!</h1>;
@@ -78,7 +79,7 @@ class App extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        console.log(parser.parse(this.state.code));
+        console.log(parse(this.state.code));
     }
 
     render() {
