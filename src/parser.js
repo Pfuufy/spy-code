@@ -25,26 +25,30 @@ function handleVariableDeclaration(node) {
 }
 
 function handleIfStatement(node) {
-    return;
+    return node;
 }
 
 function handleReturnStatement(node) {
-    return;
+    return node;
 }
 
 function handleNode(node) {
     switch (node.type) {
         case 'IfStatement':
-            handleIfStatement(node);
-            break;
+            return handleIfStatement(node);
         case 'ReturnStatement':
-            handleReturnStatement(node);
-            break;
+            return handleReturnStatement(node);
+        case 'ForStatement':
+            return handleForStatement(node);
+        case 'VariableDeclaration':
+            return handleVariableDeclaration(node);
+        case 'ExpressionStatement':
+            return handleExpressionStatement(node);
+        case 'WhileStatement':
+            return handleWhileStatement(node);
         default:
             break;
     }
-
-    return node;
 }
 
 function convertToIIFEAST(func) {
