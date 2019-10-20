@@ -1,6 +1,29 @@
 import { parse } from '@babel/parser';
 import generate from '@babel/generator';
 
+function IIFEify() {
+    const func = parse('function dummy() {const b = (() => {return 1;})();}');
+    const dum = func.program.body[0].body.body[0]
+    console.log(dum);
+    return dum;
+}
+
+function handleForStatement(node) {
+    return node;
+}
+
+function handleWhileStatement(node) {
+    return node;
+}
+
+function handleExpressionStatement(node) {
+    return node;
+}
+
+function handleVariableDeclaration(node) {
+    return IIFEify();
+}
+
 function handleIfStatement(node) {
     return;
 }

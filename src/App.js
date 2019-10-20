@@ -59,10 +59,12 @@ class App extends React.Component {
         super();
         this.state = {
             code: (
-                'function add(a, b) { \n' +
-                '\tif (a === 1) return a;\n' +
-                '\treturn a + b;\n' + 
-                '}'
+                'function add(a) { \n' +
+                '\tconst b = 1\n' + 
+                '\treturn a + b\n' +
+                '}\n' +
+                '\n' +
+                'add(1);' 
             )
         };
         this.handleChange = this.handleChange.bind(this);
@@ -76,7 +78,8 @@ class App extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         const IIFEFunction = convertToIIFEFunction(this.state.code);
-        console.log(IIFEFunction);
+        console.log(IIFEFunction)
+        console.log(eval(IIFEFunction));
     }
 
     render() {
