@@ -3,9 +3,8 @@ import generate from '@babel/generator';
 
 function IIFEify() {
     const func = parse('function dummy() {const b = (() => {return 1;})();}');
-    const dum = func.program.body[0].body.body[0]
-    console.log(dum);
-    return dum;
+    const iife = func.program.body[0].body.body[0].declarations[0].init;
+    return iife;
 }
 
 function handleForStatement(node) {
@@ -21,7 +20,8 @@ function handleExpressionStatement(node) {
 }
 
 function handleVariableDeclaration(node) {
-    return IIFEify();
+    node.declarations[0].init = IIFEify();
+    return node;
 }
 
 function handleIfStatement(node) {
