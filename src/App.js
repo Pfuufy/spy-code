@@ -78,7 +78,7 @@ class App extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         const IIFEFunction = convertToIIFEFunction(this.state.code);
-        console.log(IIFEFunction)
+        // console.log(IIFEFunction)
         console.log(eval(IIFEFunction));
     }
 

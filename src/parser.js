@@ -1,8 +1,10 @@
 import { parse } from '@babel/parser';
 import generate from '@babel/generator';
 
-function IIFEify() {
-    const func = parse('function dummy() {const b = (() => {return 1;})();}');
+function IIFEify(val) {
+    // Returns IIFE embedded within function because IIFE on it's 
+    // own parses differently for AST
+    const func = parse(`function dummy() {const b = (() => {return ${val};})();}`);
     const iife = func.program.body[0].body.body[0].declarations[0].init;
     return iife;
 }
@@ -20,7 +22,8 @@ function handleExpressionStatement(node) {
 }
 
 function handleVariableDeclaration(node) {
-    node.declarations[0].init = IIFEify();
+    const val = node.declarations[0].init.value;
+    node.declarations[0].init = IIFEify(val);
     return node;
 }
 
