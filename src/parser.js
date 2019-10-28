@@ -1,10 +1,17 @@
 import { parse } from '@babel/parser';
 import generate from '@babel/generator';
 
-function IIFEify(val) {
+function IIFEify(callback, val) {
     // Returns IIFE embedded within function because IIFE on it's 
     // own parses differently for AST
-    const func = parse(`function dummy() {const b = (() => {return ${val};})();}`);
+    const func = parse(`
+        function urmom() {
+            const a = (() => {
+                ${callback()}
+                return ${val ? val : undefined};
+            })();
+        }`);
+
     const iife = func.program.body[0].body.body[0].declarations[0].init;
     return iife;
 }
@@ -22,8 +29,13 @@ function handleExpressionStatement(node) {
 }
 
 function handleVariableDeclaration(node) {
+    const varName = node.declarations[0].id.name;
     const val = node.declarations[0].init.value;
-    node.declarations[0].init = IIFEify(val);
+    const callback = function() {
+        console.log(`Assigning variable ${varName} value ${val}`);
+    }
+
+    node.declarations[0].init = IIFEify(callback, val);
     return node;
 }
 
@@ -54,6 +66,14 @@ function handleNode(node) {
     }
 }
 
+/**
+ * @param {function} func 
+ * 
+ * This function takes a function as input
+ * and converts all of its nodes to an
+ * immediately invoked function expression (IIFE)
+ * abstract syntax tree (AST) version of it.
+ */
 function convertToIIFEAST(func) {
     const ast = parse(func);
     const body = ast.program.body[0].body.body;
@@ -66,6 +86,14 @@ function convertToIIFEAST(func) {
     return ast;
 }
 
+/**
+ * 
+ * @param {any} abstractSyntaxTree
+ * 
+ * Takes as input an abstract syntax tree
+ * and converts it back into an executable
+ * function.
+ */
 function convertToIIFEFunction(abstractSyntaxTree) {
     const ast = convertToIIFEAST(abstractSyntaxTree);
     return generate(ast).code;
