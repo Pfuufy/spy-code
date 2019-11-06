@@ -48,13 +48,16 @@ function handleIfStatement(node) {
 }
 
 function handleReturnStatement(node) {
+    const cb = () => {
+        console.log('return statement');
+    }
+    node.argument.callee = IIFEify(cb);
     return node;
 }
 
 function handleNode(node) {
     switch (node.type) {
         case 'IfStatement':
-            // console.log(node);
             return handleIfStatement(node);
         case 'ReturnStatement':
             return handleReturnStatement(node);
