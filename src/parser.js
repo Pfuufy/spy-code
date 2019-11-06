@@ -31,15 +31,19 @@ function handleExpressionStatement(node) {
 function handleVariableDeclaration(node) {
     const varName = node.declarations[0].id.name;
     const val = node.declarations[0].init.value;
-    const callback = function() {
+    const cb = () => {
         console.log(`Assigning variable ${varName} value ${val}`);
     }
 
-    node.declarations[0].init = IIFEify(callback, val);
+    node.declarations[0].init = IIFEify(cb, val);
     return node;
 }
 
 function handleIfStatement(node) {
+    const cb = () => {
+        console.log('if statement');
+    }
+    node.consequent.body.unshift(IIFEify(cb))
     return node;
 }
 
@@ -50,6 +54,7 @@ function handleReturnStatement(node) {
 function handleNode(node) {
     switch (node.type) {
         case 'IfStatement':
+            // console.log(node);
             return handleIfStatement(node);
         case 'ReturnStatement':
             return handleReturnStatement(node);
