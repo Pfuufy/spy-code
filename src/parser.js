@@ -1,6 +1,14 @@
 import { parse } from '@babel/parser';
 import generate from '@babel/generator';
 
+/**
+ * @param {function} callback 
+ * @param {any} val
+ * @returns {IIFE}
+ * 
+ * Returns an IIFE to execute the input code
+ * and return an optional input value.
+ */
 function IIFEify(callback, val) {
     // Returns IIFE embedded within function because IIFE on it's 
     // own parses differently for AST
@@ -17,16 +25,16 @@ function IIFEify(callback, val) {
 }
 
 /**
- * Calculates the amount of times a for loop
+ * Calculates the amount of times a loop
  * is executed.
  * 
  * @param {number} initVal for loop initializer value
  * @param {number} testLim for loop test limit
  * @param {string} testOp for loop test operator
- * @param {string} incOp for loop incrementor operator
  * @param {number} incVal for loop incrementor value
+ * @returns {number} number of times to execute
  */
-function countTimes(initVal, testLim, testOp, incOp, incVal) {
+function countTimes(initVal, testLim, testOp, incVal) {
     let constant = 0;
 
     if (testOp === '>') {
@@ -43,6 +51,9 @@ function countTimes(initVal, testLim, testOp, incOp, incVal) {
     return Math.floor((testLim - initVal) / incVal) + constant;
 }
 
+/**
+ * @param {AST node} node 
+ */
 function handleForStatement(node) {
     const initVal = node.init.declarations[0].init.value;
     const testLim = node.test.right.value;
@@ -58,8 +69,6 @@ function handleForStatement(node) {
     }
     
     const times = countTimes(initVal, testLim, testOp, incOp, incVal);
-    console.log('times', times);
-
 
     const cb = () => {
         for (let i = initVal; i < times; i++) {
@@ -79,6 +88,9 @@ function handleExpressionStatement(node) {
     return node;
 }
 
+/**
+ * @param {AST node} node 
+ */
 function handleVariableDeclaration(node) {
     const varName = node.declarations[0].id.name;
     const val = node.declarations[0].init.value;
@@ -90,6 +102,9 @@ function handleVariableDeclaration(node) {
     return node;
 }
 
+/**
+ * @param {AST node} node 
+ */
 function handleIfStatement(node) {
     const cb = () => {
         console.log('if statement');
@@ -98,6 +113,9 @@ function handleIfStatement(node) {
     return node;
 }
 
+/**
+ * @param {AST node} node 
+ */
 function handleReturnStatement(node) {
     const cb = () => {
         console.log('return statement');
@@ -106,6 +124,13 @@ function handleReturnStatement(node) {
     return node;
 }
 
+/**
+ * @param {AST node} node
+ * @returns modified node
+ * 
+ * Takes as input an AST node and returns a function
+ * to appropriately alter the node.
+ */
 function handleNode(node) {
     switch (node.type) {
         case 'IfStatement':
