@@ -16,7 +16,58 @@ function IIFEify(callback, val) {
     return iife;
 }
 
+/**
+ * Calculates the amount of times a for loop
+ * is executed.
+ * 
+ * @param {number} initVal for loop initializer value
+ * @param {number} testLim for loop test limit
+ * @param {string} testOp for loop test operator
+ * @param {string} incOp for loop incrementor operator
+ * @param {number} incVal for loop incrementor value
+ */
+function countTimes(initVal, testLim, testOp, incOp, incVal) {
+    let constant = 0;
+
+    if (testOp === '>') {
+        initVal = -initVal;
+        testLim = -testLim;
+    } else if (testOp === '>=') {
+        initVal = -initVal;
+        testLim = -testLim;
+        constant = 1;
+    } else if (testOp === '<=') {
+        constant = 1;
+    }
+
+    return Math.floor((testLim - initVal) / incVal) + constant;
+}
+
 function handleForStatement(node) {
+    const initVal = node.init.declarations[0].init.value;
+    const testLim = node.test.right.value;
+    const testOp = node.test.operator;
+    const incOp = node.update.operator;
+
+    let incVal;
+
+    try {
+        incVal = node.update.right.value;
+    } catch {
+        incVal = 1;
+    }
+    
+    const times = countTimes(initVal, testLim, testOp, incOp, incVal);
+    console.log('times', times);
+
+
+    const cb = () => {
+        for (let i = initVal; i < times; i++) {
+            console.log('for loop');
+        }
+    }
+
+    node.body.body.unshift(IIFEify(cb));
     return node;
 }
 
@@ -43,7 +94,7 @@ function handleIfStatement(node) {
     const cb = () => {
         console.log('if statement');
     }
-    node.consequent.body.unshift(IIFEify(cb))
+    node.consequent.body.unshift(IIFEify(cb));
     return node;
 }
 
