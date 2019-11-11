@@ -4,7 +4,7 @@ import generate from '@babel/generator';
 /**
  * @param {function} callback 
  * @param {any} val
- * @returns {IIFE}
+ * @returns {IIFE} Immediately invoked funciton expression
  * 
  * Returns an IIFE to execute the input code
  * and return an optional input value.
@@ -58,7 +58,6 @@ function handleForStatement(node) {
     const initVal = node.init.declarations[0].init.value;
     const testLim = node.test.right.value;
     const testOp = node.test.operator;
-    const incOp = node.update.operator;
 
     let incVal;
 
@@ -68,11 +67,11 @@ function handleForStatement(node) {
         incVal = 1;
     }
     
-    const times = countTimes(initVal, testLim, testOp, incOp, incVal);
+    const times = countTimes(initVal, testLim, testOp, incVal);
 
     const cb = () => {
         for (let i = initVal; i < times; i++) {
-            console.log('for loop');
+            console.log(`for loop iteration: ${i + 1}`);
         }
     }
 
@@ -151,7 +150,8 @@ function handleNode(node) {
 }
 
 /**
- * @param {function} func 
+ * @param {function} func
+ * @returns {AST}
  * 
  * This function takes a function as input
  * and converts all of its nodes to an
@@ -171,8 +171,8 @@ function convertToIIFEAST(func) {
 }
 
 /**
- * 
  * @param {any} abstractSyntaxTree
+ * @returns {function} executable function with eval()
  * 
  * Takes as input an abstract syntax tree
  * and converts it back into an executable

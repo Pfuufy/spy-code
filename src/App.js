@@ -42,7 +42,7 @@ class CodeForm extends React.Component {
                     onChange={this.props.handleChange}
                     onKeyDown={this.keyDown}
                     rows="20"
-                    cols="50"
+                    cols="40"
                     wrap="hard"
                     autoComplete="off"
                     autoFocus
@@ -60,8 +60,11 @@ class App extends React.Component {
         this.state = {
             code: (
                 'function add(a) { \n' +
-                '\tconst b = 1\n' + 
-                '\treturn a + b\n' +
+                '\tlet b = 1;\n' +
+                '\tfor (let i = 0; i < 10; i++) {\n' + 
+                '\t\tb++;\n' +
+                '\t}\n' +
+                '\treturn a + b;\n' +
                 '}\n' +
                 '\n' +
                 'add(1);' 
