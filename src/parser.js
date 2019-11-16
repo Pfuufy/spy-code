@@ -15,7 +15,7 @@ function IIFEify(callback, val) {
     const func = parse(`
         function urmom() {
             const a = (() => {
-                ${callback()}
+                (${callback})();
                 return ${val ? val : undefined};
             })();
         }`);
@@ -34,9 +34,19 @@ function IIFEify(callback, val) {
  * @param {number} incVal for loop incrementor value
  * @returns {number} number of times to execute
  */
-function countTimes(initVal, testLim, testOp, incVal) {
-    let constant = 0;
+function countTimes(node) {
+    let initVal = node.init.declarations[0].init.value;
+    let testLim = node.test.right.value;
+    const testOp = node.test.operator;
 
+    let incVal;
+    try {
+        incVal = node.update.right.value;
+    } catch {
+        incVal = 1;
+    }
+
+    let constant = 0;
     if (testOp === '>') {
         initVal = -initVal;
         testLim = -testLim;
@@ -55,22 +65,10 @@ function countTimes(initVal, testLim, testOp, incVal) {
  * @param {AST node} node 
  */
 function handleForStatement(node) {
-    const initVal = node.init.declarations[0].init.value;
-    const testLim = node.test.right.value;
-    const testOp = node.test.operator;
-
-    let incVal;
-
-    try {
-        incVal = node.update.right.value;
-    } catch {
-        incVal = 1;
-    }
-    
-    const times = countTimes(initVal, testLim, testOp, incVal);
+    const times = countTimes(node);
 
     const cb = () => {
-        for (let i = initVal; i < times; i++) {
+        for (let i = 0; i < times; i++) {
             console.log(`for loop iteration: ${i + 1}`);
         }
     }
@@ -91,10 +89,9 @@ function handleExpressionStatement(node) {
  * @param {AST node} node 
  */
 function handleVariableDeclaration(node) {
-    const varName = node.declarations[0].id.name;
     const val = node.declarations[0].init.value;
     const cb = () => {
-        console.log(`Assigning variable ${varName} value ${val}`);
+        console.log('Variable declaration');
     }
 
     node.declarations[0].init = IIFEify(cb, val);
@@ -145,7 +142,7 @@ function handleNode(node) {
         case 'WhileStatement':
             return handleWhileStatement(node);
         default:
-            break;
+            return node;
     }
 }
 
@@ -158,7 +155,7 @@ function handleNode(node) {
  * immediately invoked function expression (IIFE)
  * abstract syntax tree (AST) version of it.
  */
-function convertToIIFEAST(func) {
+function convertToIIFEFunction(func) {
     const ast = parse(func);
     const body = ast.program.body[0].body.body;
 
@@ -167,19 +164,6 @@ function convertToIIFEAST(func) {
     });
 
     ast.program.body[0].body.body = body;
-    return ast;
-}
-
-/**
- * @param {any} abstractSyntaxTree
- * @returns {function} executable function with eval()
- * 
- * Takes as input an abstract syntax tree
- * and converts it back into an executable
- * function.
- */
-function convertToIIFEFunction(abstractSyntaxTree) {
-    const ast = convertToIIFEAST(abstractSyntaxTree);
     return generate(ast).code;
 }
 

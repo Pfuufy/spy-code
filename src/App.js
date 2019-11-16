@@ -61,8 +61,11 @@ class App extends React.Component {
             code: (
                 'function add(a) { \n' +
                 '\tlet b = 1;\n' +
-                '\tfor (let i = 0; i < 10; i++) {\n' + 
-                '\t\tb++;\n' +
+                // '\tfor (let i=0; i<5; i++) {\n' + 
+                // '\t\tb++;\n' +
+                // '\t}\n' +
+                '\tif (b===6) {\n' +
+                '\t\t b = 1;\n' +
                 '\t}\n' +
                 '\treturn a + b;\n' +
                 '}\n' +
@@ -81,7 +84,7 @@ class App extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         const IIFEFunction = convertToIIFEFunction(this.state.code);
-        // console.log(IIFEFunction)
+        console.log(IIFEFunction)
         console.log(eval(IIFEFunction));
     }
 
