@@ -1,28 +1,4 @@
 import { parse } from '@babel/parser';
-import generate from '@babel/generator';
-
-/**
- * @param {function} callback 
- * @param {any} val
- * @returns {IIFE} Immediately invoked funciton expression
- * 
- * Returns an IIFE to execute the input code
- * and return an optional input value.
- */
-function IIFEify(callback, val) {
-    // Returns IIFE embedded within function because IIFE on it's 
-    // own parses differently for AST
-    const func = parse(`
-        function urmom() {
-            const a = (() => {
-                (${callback})();
-                return ${val ? val : undefined};
-            })();
-        }`);
-
-    const iife = func.program.body[0].body.body[0].declarations[0].init;
-    return iife;
-}
 
 /**
  * Calculates the amount of times a loop
@@ -67,21 +43,18 @@ function countTimes(node) {
 function handleForStatement(node) {
     const times = countTimes(node);
 
-    const cb = () => {
-        for (let i = 0; i < times; i++) {
-            console.log(`for loop iteration: ${i + 1}`);
-        }
+    for (let i = 0; i < times; i++) {
+        console.log(`for loop iteration: ${i + 1}`);
     }
-
-    node.body.body.unshift(IIFEify(cb));
-    return node;
 }
 
 function handleWhileStatement(node) {
+    console.log('while statement');
     return node;
 }
 
 function handleExpressionStatement(node) {
+    console.log('expression statement');
     return node;
 }
 
@@ -90,34 +63,21 @@ function handleExpressionStatement(node) {
  */
 function handleVariableDeclaration(node) {
     const val = node.declarations[0].init.value;
-    const cb = () => {
-        console.log('Variable declaration');
-    }
-
-    node.declarations[0].init = IIFEify(cb, val);
-    return node;
+    console.log('variable declaration');
 }
 
 /**
  * @param {AST node} node 
  */
 function handleIfStatement(node) {
-    const cb = () => {
-        console.log('if statement');
-    }
-    node.consequent.body.unshift(IIFEify(cb));
-    return node;
+    console.log('if statement');
 }
 
 /**
  * @param {AST node} node 
  */
 function handleReturnStatement(node) {
-    const cb = () => {
-        console.log('return statement');
-    }
-    node.argument.callee = IIFEify(cb);
-    return node;
+    console.log('return statement');
 }
 
 /**
@@ -130,18 +90,25 @@ function handleReturnStatement(node) {
 function handleNode(node) {
     switch (node.type) {
         case 'IfStatement':
-            return handleIfStatement(node);
+            handleIfStatement(node);
+            break;
         case 'ReturnStatement':
-            return handleReturnStatement(node);
+            handleReturnStatement(node);
+            break;
         case 'ForStatement':
-            return handleForStatement(node);
+            handleForStatement(node);
+            break;
         case 'VariableDeclaration':
-            return handleVariableDeclaration(node);
+            handleVariableDeclaration(node);
+            break;
         case 'ExpressionStatement':
-            return handleExpressionStatement(node);
+            handleExpressionStatement(node);
+            break;
         case 'WhileStatement':
-            return handleWhileStatement(node);
+            handleWhileStatement(node);
+            break;
         default:
+            console.log('unknown node type');
             return node;
     }
 }
@@ -155,7 +122,7 @@ function handleNode(node) {
  * immediately invoked function expression (IIFE)
  * abstract syntax tree (AST) version of it.
  */
-function convertToIIFEFunction(func) {
+function createFunctionObjects(func) {
     const ast = parse(func);
     const body = ast.program.body[0].body.body;
 
@@ -163,8 +130,7 @@ function convertToIIFEFunction(func) {
         arr[i] = handleNode(node);
     });
 
-    ast.program.body[0].body.body = body;
-    return generate(ast).code;
+    return func;
 }
 
-export { convertToIIFEFunction }
+export { createFunctionObjects }

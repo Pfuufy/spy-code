@@ -2,7 +2,7 @@ import React from 'react';
 
 import './App.css';
 
-import { convertToIIFEFunction } from './parser';
+import { createFunctionObjects } from './parser';
 
 function Title() {
     return <h1>Spy Code!</h1>;
@@ -61,9 +61,9 @@ class App extends React.Component {
             code: (
                 'function add(a) { \n' +
                 '\tlet b = 1;\n' +
-                // '\tfor (let i=0; i<5; i++) {\n' + 
-                // '\t\tb++;\n' +
-                // '\t}\n' +
+                '\tfor (let i=0; i<5; i++) {\n' + 
+                '\t\tb++;\n' +
+                '\t}\n' +
                 '\tif (b===6) {\n' +
                 '\t\t b = 1;\n' +
                 '\t}\n' +
@@ -83,9 +83,8 @@ class App extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        const IIFEFunction = convertToIIFEFunction(this.state.code);
-        console.log(IIFEFunction)
-        console.log(eval(IIFEFunction));
+        const functionObjects = createFunctionObjects(this.state.code);
+        console.log(eval(functionObjects));
     }
 
     render() {
